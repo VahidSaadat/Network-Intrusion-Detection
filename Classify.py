@@ -1,7 +1,9 @@
 import pandas as pd
 from sklearn.cluster import KMeans
+from fcmeans import FCM
 from imblearn.over_sampling import SMOTE
 
+# Manual score calculation
 def performance_test(model_labels, real_labels):
     TP = TN = FP = FN = 0
     for model_label, real_label in zip(model_labels, real_labels) :
@@ -40,9 +42,15 @@ def main():
     normal_dataset_url = 'kddcup_normal.csv'
     dataframe, labelsframe = read_dataset(normal_dataset_url)
     data_resampled, labels_resampled = resample_dataset(dataframe, labelsframe)
+    
     kmeans = KMeans(n_clusters=2)
     kmeans.fit(data_resampled)
     performance_test(kmeans.labels_, labels_resampled.values)
-
+    
+    fcm = FCM(n_clusters=2)
+    fcm.fit(data_resampled)
+    fcm_labels  = fcm.u.argmax(axis=1)
+    performance_test(fcm_labels, label_resampled.values)
+    
 if __name__ == '__main__':
     main()
